@@ -1,0 +1,60 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: rgba(207, 245, 245, 0.185);
+}
+
+.site-logo {
+    width: 150px;
+    height: 150px;
+}
+
+.user-img img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.const-header {
+    display: flex;
+}
+
+.user-name h6 {
+    margin-top: 3rem;
+    margin-left: 1rem;
+}
+
+
+.contestant-item {
+    border: 1px solid rgba(128, 128, 128, 0.322);
+    border-radius: 5px;
+}
+
+.vote-count {
+    font-size: 14px;
+}
+
+.vote-count-container {
+    position: absolute;
+    margin-top: -3rem;
+    margin-left: 6rem;
+}
+
+.search-const {
+    margin-top: 8rem;
+}
+
+
+/* PHONE SCREENS */
+
+@media only screen and (max-width: 600px) and (min-width: 200px) {
+
+    .search-const {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+}
