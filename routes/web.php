@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::resource('/contestants', \App\Http\Controllers\UserController::class);
+Route::get('/contestant/{slug}', [App\Http\Controllers\UserController::class, 'userDetail'])->name('user.show');
+
 Route::get('/', function () {
     return redirect()->route('contestants.index');
 });

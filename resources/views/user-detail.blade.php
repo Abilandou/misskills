@@ -1,8 +1,22 @@
 @extends('layouts.app')
 @section('title', 'Contestants')
+@section('contestantIcon', "{{ route('user.image',['filename'=>$user->image]) }}")
 @section('content')
 
 <div class="container">
+    {{-- <div class="row">
+        <div class="col-lg-4 col-sm-12"></div>
+        <div class="col-lg-4">
+            <div class="text-center p-3">
+                <img class="site-logo" src="{{ asset('public/assets/logo/logo.png') }}" alt="">
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-12">
+            <div class="search-const">
+                <a href="{{ route('contestants.index') }}" class="btn vote-me-btn vote-user-detail mb-2">All Contestants</a>
+            </div>
+        </div>
+    </div> --}}
     <div class="text-center contest-header">
         <div class="text-center">
             <img class="site-logo" src="{{ asset('public/assets/logo/logo.png') }}" alt="">
@@ -26,105 +40,92 @@
         <div class="col-lg-4"></div>
         <div class="col-lg-4 col-sm-12">
             <div class="search-const">
-                <form action="#">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search Contestant By Name...">
-                 </form>
+                <a href="{{ route('contestants.index') }}" class="btn vote-me-btn vote-user-detail mb-2">All Contestants</a>
             </div>
         </div>
     </div>
 
 
     <div class="contestants">
-
-        <div class="row" id="competitorContent">
-            @forelse($users as $user)
-                <div class="col-lg-4 mb-4 compete-search-item">
-                    <div class="contestant-item p-2 bg-white">
-                        <div class="const-header">
-                            <div class="user-img">
-                                <a href="{{ route('user.show',['slug'=>$user->slug]) }}">
-                                    <img src="{{ route('user.image',['filename'=>$user->image]) }}" alt="">
-                                </a>
-                            </div>
-                            <div class="user-name">
-                                <div class="vote-count-container p-2">
-                                    @php
-                                        $voteAmount =  array_sum(\App\Models\Vote::where('user_id', $user->id)->get()->pluck("amount")->toArray());
-                                        $voteCount = ($voteAmount / 100);
-                                    @endphp
-                                    <h6 class="vote-count">Votes: <b class="vt-count">{{ $voteCount }}</b></h6>
-                                </div>
-                                <div>
-                                    <a href="{{ route('user.show',['slug'=>$user->slug]) }}">
-                                        <h6 class="text-dark contestant-name">{{ $user->name }}</h6>
-                                    </a>
-                                    <small class="mx-3 contestant-number">Contestant Number:
-
-                                        <span class="contest">
-                                            {{ $user->contestant_number <= 9 ? '0'.$user->contestant_number : $user->contestant_number }}
-                                        </span>
-
-                                    </small>
-                                    <div class="card-body m-3">
-                                        <a href="{{ route('user.show',['slug'=>$user->slug]) }}"><button class="btn btn-primary vote-me-btn">Vote Me</button></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <div class="row border p-3" id="competitorContent">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-4 mb-4">
+                <div class="contestant-item p-2 bg-white">
+                    <div class="user-det-img">
+                        <img class="w-100" src="{{ $user->alt_image ? route('user.image',['filename'=>$user->alt_image]) : route('user.image',['filename'=>$user->image]) }}" alt="">
                     </div>
                 </div>
-                <!-- Modal -->
-                <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="voteMeModal{{ $user->id }}" tabindex="-1" aria-labelledby="voteMeModalLabel" aria-hidden="true">
-                    <div class="modal-dialog ">
-                        <div class="modal-content modal-bg">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="voteMeModalLabel">Voting For: {{ $user->name }}</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <small class="p-3 advice-to-user"></small>
-                            <form action="{{ route('initialise.payment') }}" method="POST" id="vote-form">
-                                <div class="modal-body">
-                                    @csrf
-                                    <input type="hidden" name="contestantId" value="{{ $user->id }}">
-                                    <div class="mb-4">
-                                        <label for="phone">Phone(MTN/ORANGE)
-                                            <small>Without Country Code</small>
-                                        </label>
-                                        <input type="text" placeholder="E.g 673525807" name="phone" id="phone_number" class="form-control">
-                                        <small class="phone-err text-danger"></small>
-                                    </div>
-                                    <div>
-                                        <label for="">Number of Votes</label>
-                                        <input type="number" min="1" id="number_of_votes" name="number_of_votes" class="form-control">
-                                        <small class="number_of_votes-err text-danger"></small>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> --}}
-                                <button type="button"  onClick="vote()" class="btn btn-primary vote-btn vote-me-btn">Continue</button>
-                                </div>
-                            </form>
-                        </div>
+            </div>
+            <div class="col-lg-3 mb-4">
+                <div class="const-headder py-5">
+                    <h5 class="mx-1 mb-4">{{ $user->name }}</h5>
+
+                    <small class="mb-2 contestadnt-number">Contestant Number:
+
+                        <span class="contest">
+                            {{ $user->contestant_number <= 9 ? '0'.$user->contestant_number : $user->contestant_number }}
+                        </span>
+
+                    </small>
+
+                    <div class="d-flex justify-content-between mt-3">
+                        @php
+                            $voteAmount =  array_sum(\App\Models\Vote::where('user_id', $user->id)->get()->pluck("amount")->toArray());
+                            $voteCount = $voteAmount / 100;
+                        @endphp
+                        <small>
+                            Number of Votes: <span><b class="contest">{{ $voteCount }}</b></span>
+                        </small>
+                        <span>
+                            Position: <b class="contest">N/A</b>
+                        </span>
+
+                    </div>
+                    <div>
+                        <button class="btn vote-me-btn vote-user-detail" data-bs-toggle="modal" data-bs-target="#voteMeModal">Vote Me</button>
                     </div>
                 </div>
-
-            @empty
-                <div class="container">
-                    <p>No Contenstants Yet</p>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="voteMeModal" tabindex="-1" aria-labelledby="voteMeModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content modal-bg">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="voteMeModalLabel">Voting For: {{ $user->name }}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <small class="p-3 advice-to-user"></small>
+                    <form action="{{ route('initialise.payment') }}" method="POST" id="vote-form">
+                        <div class="modal-body">
+                            @csrf
+                            <input type="hidden" name="contestantId" value="{{ $user->id }}">
+                            <div class="mb-4">
+                                <label for="phone">Phone(MTN/ORANGE)
+                                    <small>Without Country Code</small>
+                                </label>
+                                <input type="text" placeholder="E.g 673525807" name="phone" id="phone_number" class="form-control">
+                                <small class="phone-err text-danger"></small>
+                            </div>
+                            <div>
+                                <label for="">Number of Votes</label>
+                                <input type="number" min="1" id="number_of_votes" name="number_of_votes" class="form-control">
+                                <small class="number_of_votes-err text-danger"></small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                        {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> --}}
+                        <button type="button"  onClick="vote()" class="btn btn-primary vote-btn vote-me-btn">Continue</button>
+                        </div>
+                    </form>
                 </div>
-            @endforelse
+                </div>
+            </div>
         </div>
 
 
     </div>
 </div>
-{{--
-    window.location.replace('http://localhost/misskills/public/verify-nuopia/'+transaction_id);
-     setInterval(function (){
-                        window.location.href = "{{URL::to(`http://localhost/misskills/public/verify-nuopia/${transaction_id}`)}}"
-                    }, 2000);
---}}
-{{-- window.location.replace('http://localhost/misskills/public/verify-nuopia/'+transaction_id);  --}}
+
 @endsection
 
 @section('footer_script')
@@ -160,16 +161,6 @@
 setInterval(function() { makeTimer(); }, 1000);
 </script>
 
-<script>
-    $(document).ready(function(){
-      $("#searchInput").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#competitorContent .compete-search-item").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-      });
-    });
-</script>
 
 {{-- Voting --}}
 

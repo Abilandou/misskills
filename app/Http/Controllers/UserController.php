@@ -40,6 +40,12 @@ class UserController extends Controller
         //
     }
 
+
+    public function userDetail($slug) {
+        $user = User::where('slug', $slug)->first();
+        return view('user-detail')->with(compact('user'));
+    }
+
     /**
      * Display the specified resource.
      *

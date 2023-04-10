@@ -5,6 +5,7 @@
 
 body {
     background-color: rgba(207, 245, 245, 0.185);
+   background-image: url('../img/gig.gif');
 }
 
 .site-logo {
@@ -47,6 +48,83 @@ body {
     margin-top: 8rem;
 }
 
+.contest, .vt-count {
+    color: #d9233a;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+.contestant-number {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.contestant-name {
+    margin-bottom: -0.3rem;
+}
+
+.vote-me-btn {
+    background-color: #fa9b1b;
+    border: 1px solid #fa9b1b !important;
+}
+
+.vote-me-btn:hover {
+    background-color: #5f3703;
+    border: 1px solid #5f3703 !important;
+}
+
+.modal-bg {
+    background-image: url('../img/misskills.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: rgba(0,0,0,0.5)
+}
+
+.modal-title, label {
+    color: white !important;
+    opacity: 1 !important;
+    background-color: rgba(0, 0, 0, 0.644);
+    padding: 0.1rem;
+    font-weight: bold;
+}
+
+.btn-close {
+    background-color: white !important;
+}
+
+.vote-user-detail, .vote-user-detail:hover {
+    width: 100% !important;
+    color: white;
+    margin-top: 2rem;
+}
+
+.contest-header {
+    margin-bottom: -5rem;
+}
+
+#days {
+    font-size: 30px;
+    color: #db4844;
+}
+#hours {
+    font-size: 20px;
+    color: #f07c22;
+}
+#minutes {
+    font-size: 18px;
+    color: #f6da74;
+}
+#seconds {
+    font-size: 16px;
+    color: #abcd58;
+}
+
+.duration-time {
+    margin-top: 9rem;
+}
 
 /* PHONE SCREENS */
 
@@ -55,6 +133,10 @@ body {
     .search-const {
         margin-top: 1rem;
         margin-bottom: 1rem;
+    }
+
+    .contest-header {
+        margin-bottom: -7rem;
     }
 
 }

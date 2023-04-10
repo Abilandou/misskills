@@ -5,13 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>@yield('title')-MissSkills</title>
-
+        {{-- @if(Route::is('contestants.index') || Route::is('welcome')) --}}
+            <link rel="icon" href="{{ asset('public/assets/logo/logo.png') }}" type="image/png">
+        {{-- @else
+            <link rel="icon" href="@yield('contestantIcon')">
+        @endif --}}
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-        <link rel="stylesheet" href="{{ asset('assets/libs/bootstrap/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-        <link rel="stylesheet" href="{{ asset('assets/libs/toastr/build/toastr.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('public/assets/libs/bootstrap/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('public/assets/css/styles.css') }}">
+        <link rel="stylesheet" href="{{ asset('public/assets/libs/toastr/build/toastr.min.css') }}">
 
 
     </head>
@@ -22,10 +26,10 @@
         </main>
 
 
-        <script src="{{ asset('assets/libs/popper/popper.min.js') }}"></script>
-        <script  src="{{ asset('assets/libs/jquery/jquery.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/toastr/build/toastr.min.js') }}" ></script>
-        <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.js') }}"></script>
+        <script src="{{ asset('public/assets/libs/popper/popper.min.js') }}"></script>
+        <script  src="{{ asset('public/assets/libs/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('public/assets/libs/toastr/build/toastr.min.js') }}" ></script>
+        <script src="{{ asset('public/assets/libs/bootstrap/js/bootstrap.bundle.js') }}"></script>
         <script>
             toastr.options = {
                 "closeButton": true,

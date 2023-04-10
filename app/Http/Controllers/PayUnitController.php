@@ -16,6 +16,7 @@ class PayUnitController extends Controller
 
     public function pay(Request $request)
     {
+        // dd($request->all());
 
         define('DEVELOPER_KEY', '$u1XQ2ic$my$yPda5vMkYiO0zs7.ye9zSLeS4f.VZWbZpC1F8DpCFjQeS2I_88501402695f74bf1339c77290d471c970d0dd57d203f3a097d2544aee5765a405b236c7');
         define('SUBSCRIPTION_KEY', 'fe5dbbcea5ce7e2988b8c69bcfdfde8904aabc1f_3bd4c2531e5d59fc3183d8c816f12ca2');
@@ -82,7 +83,7 @@ class PayUnitController extends Controller
 
                 // $this->verifyNoupiaPayment($result->data->transaction);
             }else{
-                return response()->json('transaction_not_initiated');
+                return response()->json($result);
             }
 
 

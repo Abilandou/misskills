@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('image');
             $table->integer('contestant_number');
             $table->string('alt_image')->nullable();
+            $table->string('modal_image')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->string('profession')->nullable();
