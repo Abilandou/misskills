@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use SevenGps\PayUnit;
 use Illuminate\Support\Str;
-
+use \App\Models\Vote;
 
 class PayUnitController extends Controller
 {
@@ -16,8 +16,11 @@ class PayUnitController extends Controller
 
     public function pay(Request $request)
     {
+
         define('DEVELOPER_KEY', '$u1XQ2ic$my$yPda5vMkYiO0zs7.ye9zSLeS4f.VZWbZpC1F8DpCFjQeS2I_88501402695f74bf1339c77290d471c970d0dd57d203f3a097d2544aee5765a405b236c7');
         define('SUBSCRIPTION_KEY', 'fe5dbbcea5ce7e2988b8c69bcfdfde8904aabc1f_3bd4c2531e5d59fc3183d8c816f12ca2');
+
+        $amount = intval($request->number_of_votes) * 100;
 
         $curl = curl_init();
         curl_setopt_array($curl, [
@@ -34,7 +37,7 @@ class PayUnitController extends Controller
             // (string) [required] Item reference e.g SCHOOL FEES
             'reference'     => 'Voting For an Individual',
             // (int) [required] Item cost
-            'amount' 		=> intval($request->amount),
+            'amount' 		=> intval($amount),
             // (int) [required] Mobile Money account number. No phone code.
             'phone' 		=> $request->phone,
             // (string) [required] Payment method: mobilemoney, noupia, invoice or withdraw.
@@ -64,12 +67,24 @@ class PayUnitController extends Controller
 
         if ($error) {
             printf('cURL Error :%s', $error);
-            dd($error);
         }
         else {
 
             $result = json_decode($response);
-            dd($result->data->transaction);
+            // dd($result->data->transaction);
+            if($result->response === 'success') {
+
+                return response()->json([
+                    'transactionId' => $result->data->transaction,
+                    'status' => 'success',
+                    'userId' => $request->contestantId
+                ]);
+
+                // $this->verifyNoupiaPayment($result->data->transaction);
+            }else{
+                return response()->json('transaction_not_initiated');
+            }
+
 
             /**
              * Example of a failed JSON response
@@ -111,8 +126,11 @@ class PayUnitController extends Controller
     }
 
 
-    public function verifyNoupiaPayment($transactionId)
+    public function verifyNoupiaPayment($transactionId, $userId)
     {
+        define('DEVELOPERR_KEY', '$u1XQ2ic$my$yPda5vMkYiO0zs7.ye9zSLeS4f.VZWbZpC1F8DpCFjQeS2I_88501402695f74bf1339c77290d471c970d0dd57d203f3a097d2544aee5765a405b236c7');
+        define('SUBSCRIPTIONN_KEY', 'fe5dbbcea5ce7e2988b8c69bcfdfde8904aabc1f_3bd4c2531e5d59fc3183d8c816f12ca2');
+
         $curl = curl_init();
         curl_setopt_array($curl, [
         CURLOPT_URL 		   => 'https://api.noupia.com/pay',
@@ -130,8 +148,8 @@ class PayUnitController extends Controller
                 'Accept: */*',
                 'Content-Type: application/json',
                 'Noupia-API-Signature: np-live',
-                'Noupia-API-Key: '.DEVELOPER_KEY,
-                'Noupia-Product-Key: '.SUBSCRIPTION_KEY
+                'Noupia-API-Key: '.DEVELOPERR_KEY,
+                'Noupia-Product-Key: '.SUBSCRIPTIONN_KEY
             ],
         ]);
 
@@ -176,7 +194,36 @@ class PayUnitController extends Controller
             */
 
             $transactionStatus = $result->data->status;
-            dd($transactionStatus);
+            if($transactionStatus === 'successful') {
+
+                //Check if DB Already Contains Transaction the do not insert
+                $checkVote = Vote::where('transaction_id', $transactionId)->first();
+                if(!$checkVote){
+                     //Insert Into Votes Table
+                    $voter = new Vote();
+                    $voter->user_id = $userId;
+                    $voter->amount = $result->data->amount;
+                    $voter->transaction_id = $transactionId;
+                    $voter->save();
+
+                    session()->flash('success', 'Vote Was Successful');
+                    return redirect()->route('contestants.index');
+                }else{
+                    session()->flash('success', 'Vote Was Successful');
+                    return redirect()->route('contestants.index');
+                }
+
+
+            }
+
+            else if($transactionStatus === 'failed') {
+                session()->flash('error', 'Transaction Failed, or Transaction was cancelled. Your vote was not counted. Please try to vote again.');
+                return redirect()->route('contestants.index');
+            }
+            // if($transactionStatus === 'successful') {
+            //     dd($result);
+            // }
+
             /**
              * $transactionStatus value will be;
              *

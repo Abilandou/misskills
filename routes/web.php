@@ -24,6 +24,8 @@ Route::get('/user/{filename}', [App\Http\Controllers\Image\ImageController::clas
 
 
 Route::post('initialise-payment', [App\Http\Controllers\PayUnitController::class, 'pay'])->name('initialise.payment');
+Route::get('verify-nuopia/{transactionId}/{userId}', [App\Http\Controllers\PayUnitController::class, 'verifyNoupiaPayment'])->name('verify.noupia.payment');
+
 Route::get('payunit-return', [App\Http\Controllers\PayUnitController::class, 'payUnitReturnUrl'])->name('payunit.return');
 Route::get('payunit-notify', [App\Http\Controllers\PayUnitController::class, 'payUnitNotifyUrl'])->name('paynit.notify');
 
