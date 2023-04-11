@@ -67,7 +67,11 @@ class PayUnitController extends Controller
         $close = curl_close($curl);
 
         if ($error) {
-            printf('cURL Error :%s', $error);
+            return response()->json([
+                'error' => $error,
+                'message' => 'network-error'
+            ]);
+            // printf('cURL Error :%s', $error);
         }
         else {
 
@@ -83,7 +87,9 @@ class PayUnitController extends Controller
 
                 // $this->verifyNoupiaPayment($result->data->transaction);
             }else{
-                return response()->json($result);
+                return response()->json([
+                    'result' => $result
+                ]);
             }
 
 

@@ -4,19 +4,6 @@
 @section('content')
 
 <div class="container">
-    {{-- <div class="row">
-        <div class="col-lg-4 col-sm-12"></div>
-        <div class="col-lg-4">
-            <div class="text-center p-3">
-                <img class="site-logo" src="{{ asset('public/assets/logo/logo.png') }}" alt="">
-            </div>
-        </div>
-        <div class="col-lg-4 col-sm-12">
-            <div class="search-const">
-                <a href="{{ route('contestants.index') }}" class="btn vote-me-btn vote-user-detail mb-2">All Contestants</a>
-            </div>
-        </div>
-    </div> --}}
     <div class="text-center contest-header">
         <div class="text-center">
             <img class="site-logo" src="{{ asset('public/assets/logo/logo.png') }}" alt="">
@@ -94,7 +81,16 @@
                         <h1 class="modal-title fs-5" id="voteMeModalLabel">Voting For: {{ $user->name }}</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <small class="p-3 advice-to-user"></small>
+                    {{-- <small class="px-2 advice-to-user" style="color:#ff4089;"></small>
+                    <small class="px-2 network-error" style="color:#ff4089;"></small> --}}
+                    <div class="alert alert-danger alert-dismissible fade show general-error-section">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <strong>Notice!!!</strong> <small class="general-error"></small>
+                    </div>
+                    <div class="alert alert-success alert-dismissible fade show advice-to-user-error-section">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <strong>Note!!!</strong> <small class="advice-to-user"></small>
+                    </div>
                     <form action="{{ route('initialise.payment') }}" method="POST" id="vote-form">
                         <div class="modal-body">
                             @csrf
@@ -103,7 +99,7 @@
                                 <label for="phone">Phone(MTN/ORANGE)
                                     <small>Without Country Code</small>
                                 </label>
-                                <input type="text" placeholder="E.g 673525807" name="phone" id="phone_number" class="form-control">
+                                <input type="number" placeholder="E.g 673525807" name="phone" id="phone_number" class="form-control">
                                 <small class="phone-err text-danger"></small>
                             </div>
                             <div>
@@ -165,6 +161,12 @@ setInterval(function() { makeTimer(); }, 1000);
 {{-- Voting --}}
 
 <script>
+    $(function(){
+        $(".general-error-section, .advice-to-user-error-section").hide();
+    })
+</script>
+
+<script>
     function vote()
    {
 
@@ -172,6 +174,8 @@ setInterval(function() { makeTimer(); }, 1000);
 
        var phone = $("#phone_number");
        var number_of_votes  = $("#number_of_votes");
+       $(".general-error-section, .advice-to-user-error-section").hide();
+
 
 
        if(phone.val() == "" ){
@@ -199,7 +203,8 @@ setInterval(function() { makeTimer(); }, 1000);
        }
        else{
            $(".phone-err, .number_of_votes-err").html("");
-           $(".advice-to-user").html("Please do not leave this page until you are redirected to make your vote count.").css('color', '#ff4089');
+           $(".advice-to-user-error-section").show();
+           $(".advice-to-user").html("Please do not leave this page until you are redirected to make your vote count.");
            $("#phone_number, #number_of_votes").removeClass("is-invalid");
            $(".vote-btn").html("processing...").css('color', "#fff");
            $(".vote-btn").prop('disabled', true);
@@ -221,8 +226,25 @@ setInterval(function() { makeTimer(); }, 1000);
                     sessionStorage.setItem("transactionId", response.transactionId);
                     sessionStorage.setItem("userId", response.userId);
 
+                    if(response.message === 'network-error'){
+                        $(".general-error-section").show();
+                        $(".advice-to-user-error-section").hide();
+                        $(".general-error").html("Network Error. Please connect to the internet.");
+                        $(".advice-to-user").html(" ");
+                       $(".vote-btn").prop('disabled', false);
+                       $(".vote-btn").html("Continue").css('color', "#fff");
+                       return false;
+                    }
 
-                   if(response.status == "success")
+                    else if(response.result.code === "PAYMENT_INIT_ERROR"){
+                        $(".advice-to-user-error-section").hide();
+                        $(".general-error-section").show();
+                        $(".general-error").html("Unable to initiate transaction. Please make sure your MTN Mobile Money Phone Number is valid.");
+                       $(".vote-btn").prop('disabled', false);
+                       $(".vote-btn").html("Continue").css('color', "#fff");
+                       return false;
+                    }
+                   else if(response.status == "success")
                    {
 
                     let transaction_id =  sessionStorage.getItem("transactionId");
@@ -240,7 +262,6 @@ setInterval(function() { makeTimer(); }, 1000);
 
                    }else if (response == "transaction-not-initiated"){
                        $(".phone-err").html("Erro Initiating a transaction").css('color', '#ff4089');
-                       $("#email_login").addClass("is-invalid");
                        $(".vot-btn").prop('disabled', false);
                        $(".vot-btn").html("Continue").css('color', "#fff");
                        return false;
